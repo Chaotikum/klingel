@@ -6,6 +6,7 @@ import random
 import socket
 import struct
 import time
+import threading
 from subprocess import call
 
 def playsound(fn):
@@ -59,6 +60,7 @@ def run(data):
 	if data == "ring":
 		putfile('/sys/class/gpio/gpio11/value', '0')
 		playsound("/root/ring.wav")
+		threading.Timer(60, putfile('/sys/class/gpio/gpio11/value', '1')).start()
 
 	if data == "open":
 		playsound("/root/open.wav")
