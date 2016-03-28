@@ -6,6 +6,7 @@ import random
 import socket
 import struct
 import time
+from threading import Timer
 from subprocess import call
 
 def playsound(fn):
@@ -53,10 +54,22 @@ ifname = "eth0"
 
 s = receiver(group, port)
 
+def genugdavon():
+	putfile('/sys/class/gpio/gpio11/value', '1')
+	playsound("/root/wrong.wav")
+
+timer = None
+
 def run(data):
+	global timer
 	print(data)
 
 	if data == "ring":
+		if timer:
+			timer.cancel()
+
+		timer = Timer(60, genugdavon)
+		timer.start()
 		putfile('/sys/class/gpio/gpio11/value', '0')
 		playsound("/root/ring.wav")
 
@@ -64,6 +77,9 @@ def run(data):
 		playsound("/root/open.wav")
 	
 	if data == "summ":
+		if timer:
+			timer.cancel()
+
 		putfile('/sys/class/gpio/gpio11/value', '1')
 		playsound("/root/summ.wav")
 
